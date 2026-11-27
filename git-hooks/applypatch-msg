@@ -1,0 +1,9 @@
+#!/bin/sh
+# 通用 git 守卫的入口，逻辑在同目录的 guard.py。这个目录里的各个 hook 文件内容完全相同，靠文件名区分。
+# 只用 shell 内建功能定位文件；找不到 python3 或 guard.py 时直接放行，不挡正常提交。
+case "$0" in */*) dir=${0%/*} ;; *) dir=. ;; esac
+py=$(command -v python3 2>/dev/null)
+[ -x "$py" ] || py=/usr/bin/python3
+[ -x "$py" ] || exit 0
+[ -f "$dir/guard.py" ] || exit 0
+exec "$py" "$dir/guard.py" "${0##*/}" "$@"
